@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MacWpfTheme.Demo/MacWpfTheme.Demo.csproj" />
+    <Project Path="src/MacWpfTheme/MacWpfTheme.csproj" />
+  </Folder>
+</Solution>

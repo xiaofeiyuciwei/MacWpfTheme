@@ -1,0 +1,18 @@
+<!-- ============================================================
+     MacWpfTheme 主题入口
+     默认合并浅色主题。运行时主题切换由 ThemeHelper 完成
+     （在 MacTheme 的 MergedDictionaries 中替换 Colors.Light / Colors.Dark）
+     ============================================================ -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Colors.Light.xaml"/>
+        <ResourceDictionary Source="Typography.xaml"/>
+        <ResourceDictionary Source="Core.xaml"/>
+        <ResourceDictionary Source="Controls.xaml"/>
+        <ResourceDictionary Source="SegmentedControl.xaml"/>
+        <ResourceDictionary Source="Window.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

@@ -1,0 +1,113 @@
+<Window x:Class="MacWpfTheme.Demo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mac="clr-namespace:MacWpfTheme.Helpers;assembly=MacWpfTheme"
+        Title="PNP-VMS 视觉检测软件"
+        Style="{StaticResource Window.Mac}"
+        Width="1400" Height="850"
+        MinWidth="980" MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource Brush.Bg.Primary}">
+
+    <Grid Margin="{StaticResource Space.16}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="230"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="330"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ============ 左侧导航 ============ -->
+        <Border Grid.Column="0" Style="{StaticResource Card.Mac}">
+            <StackPanel>
+                <Label Style="{StaticResource Label.SectionTitle}" Content="功能导航"/>
+
+                <Label Style="{StaticResource Label.Caption}" Content="工作模式" Margin="0,16,0,6"/>
+                <mac:SegmentedControl Style="{StaticResource SegmentedControl.Mac}"
+                                      Height="30"
+                                      SelectedIndex="0">
+                    <ListBoxItem Content="采集"/>
+                    <ListBoxItem Content="标定"/>
+                    <ListBoxItem Content="检测"/>
+                </mac:SegmentedControl>
+
+                <Separator Margin="0,16,0,8"/>
+
+                <Button Style="{StaticResource Button.Ghost}" Content="图像采集" HorizontalContentAlignment="Left"/>
+                <Button Style="{StaticResource Button.Ghost}" Content="标定管理" HorizontalContentAlignment="Left" Margin="0,4,0,0"/>
+                <Button Style="{StaticResource Button.Ghost}" Content="配方参数" HorizontalContentAlignment="Left" Margin="0,4,0,0"/>
+                <Button Style="{StaticResource Button.Ghost}" Content="系统设置" HorizontalContentAlignment="Left" Margin="0,4,0,0"/>
+
+                <Separator Margin="0,16,0,8"/>
+
+                <CheckBox Style="{StaticResource CheckBox.Mac}" Content="启用自动触发" IsChecked="True"/>
+                <CheckBox Style="{StaticResource CheckBox.Mac}" Content="保存检测结果" Margin="0,8,0,0"/>
+
+                <Separator Margin="0,16,0,8"/>
+
+                <RadioButton Style="{StaticResource RadioButton.Mac}" Content="灰度相机" IsChecked="True"/>
+                <RadioButton Style="{StaticResource RadioButton.Mac}" Content="彩色相机" Margin="0,8,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ============ 中间预览画布（不加阴影，避免干扰画面） ============ -->
+        <Border Grid.Column="1" Margin="16,0,16,0"
+                Background="#101014" CornerRadius="{DynamicResource Radius.Lg}">
+            <Grid>
+                <TextBlock Text="图像预览区 · 无阴影 / 无毛玻璃，保证高帧率"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Foreground="#8E8E93"
+                           FontFamily="{DynamicResource Font.Primary}"
+                           FontSize="{DynamicResource Font.Size.Subtitle}"/>
+                <Border VerticalAlignment="Bottom" Margin="12"
+                        Background="#00000090" CornerRadius="{DynamicResource Radius.Md}"
+                        Padding="10,6">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource Button.Primary}" Content="开始采集"/>
+                        <Button Style="{StaticResource Button.Outline}" Content="单帧" Margin="8,0,0,0"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="导出" Margin="8,0,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ============ 右侧 Inspector 参数面板 ============ -->
+        <Border Grid.Column="2" Style="{StaticResource Card.Mac}">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Label Style="{StaticResource Label.SectionTitle}" Content="参数设置"/>
+
+                    <Label Style="{StaticResource Label.Caption}" Content="相机列表" Margin="0,16,0,6"/>
+                    <ComboBox Style="{StaticResource ComboBox.Mac}" SelectedIndex="0">
+                        <ComboBoxItem Content="Camera 0 · GigE"/>
+                        <ComboBoxItem Content="Camera 1 · USB3"/>
+                    </ComboBox>
+
+                    <Label Style="{StaticResource Label.Caption}" Content="曝光值 (µs)" Margin="0,16,0,6"/>
+                    <TextBox Style="{StaticResource TextBox.Mac}" Text="5000"/>
+
+                    <Label Style="{StaticResource Label.Caption}" Content="增益" Margin="0,16,0,6"/>
+                    <Slider Style="{StaticResource Slider.Mac}" Minimum="0" Maximum="20" Value="8"/>
+
+                    <Label Style="{StaticResource Label.Caption}" Content="检测阈值" Margin="0,16,0,6"/>
+                    <Slider Style="{StaticResource Slider.Mac}" Minimum="0" Maximum="255" Value="128"/>
+
+                    <Label Style="{StaticResource Label.Caption}" Content="ROI 尺寸 (px)" Margin="0,16,0,6"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Style="{StaticResource TextBox.Mac}" Grid.Column="0" Text="1280"/>
+                        <TextBox Style="{StaticResource TextBox.Mac}" Grid.Column="2" Text="1024"/>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                        <Button Style="{StaticResource Button.Primary}" Content="应用参数" Width="96"/>
+                        <Button Style="{StaticResource Button.Outline}" Content="重置" Width="72" Margin="8,0,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>

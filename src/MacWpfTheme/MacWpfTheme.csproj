@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>MacWpfTheme</RootNamespace>
+    <AssemblyName>MacWpfTheme</AssemblyName>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <Version>1.0.0</Version>
+    <Description>WPF 复刻 macOS Human Interface Guidelines (HIG) 风格的主题库。无实时毛玻璃、无 BlurEffect，面向视觉 / 工控上位机的高性能 UI 方案。</Description>
+  </PropertyGroup>
+
+</Project>
