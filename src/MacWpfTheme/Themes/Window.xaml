@@ -87,7 +87,7 @@
                                 <StackPanel Grid.Column="2" Orientation="Horizontal"
                                             VerticalAlignment="Center" Margin="0,0,12,0"
                                             WindowChrome.IsHitTestVisibleInChrome="True">
-                                    <Button x:Name="BtnThemeToggle" Style="{StaticResource Button.Ghost}"
+                                    <Button x:Name="BtnThemeToggle" Style="{DynamicResource Button.Ghost}"
                                             Width="28" Height="28" Content="☀"
                                             ToolTip="切换浅色 / 深色主题"/>
                                 </StackPanel>

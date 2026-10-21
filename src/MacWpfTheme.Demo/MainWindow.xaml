@@ -4,110 +4,418 @@
         xmlns:mac="clr-namespace:MacWpfTheme.Helpers;assembly=MacWpfTheme"
         Title="PNP-VMS 视觉检测软件"
         Style="{StaticResource Window.Mac}"
-        Width="1400" Height="850"
-        MinWidth="980" MinHeight="600"
+        Width="1560" Height="920"
+        MinWidth="1200" MinHeight="680"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource Brush.Bg.Primary}">
 
-    <Grid Margin="{StaticResource Space.16}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="230"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="330"/>
-        </Grid.ColumnDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>   <!-- 菜单栏 -->
+            <RowDefinition Height="50"/>   <!-- 功能工具栏 -->
+            <RowDefinition Height="*"/>    <!-- 主体：工具列 + 流程 + 图像 + 参数 -->
+            <RowDefinition Height="150"/>  <!-- 历史结果 -->
+            <RowDefinition Height="28"/>   <!-- 状态栏 -->
+        </Grid.RowDefinitions>
 
-        <!-- ============ 左侧导航 ============ -->
-        <Border Grid.Column="0" Style="{StaticResource Card.Mac}">
-            <StackPanel>
-                <Label Style="{StaticResource Label.SectionTitle}" Content="功能导航"/>
+        <!-- ================= 菜单栏 ================= -->
+        <Border Grid.Row="0" Background="{DynamicResource Brush.Bg.Secondary}"
+                BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0">
+                <TextBlock Text="文件" Margin="0,0,16,0" Cursor="Hand"
+                           Foreground="{DynamicResource Brush.Text.Primary}"
+                           FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                <TextBlock Text="设置" Margin="0,0,16,0" Cursor="Hand"
+                           Foreground="{DynamicResource Brush.Text.Primary}"
+                           FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                <TextBlock Text="工具" Margin="0,0,16,0" Cursor="Hand"
+                           Foreground="{DynamicResource Brush.Text.Primary}"
+                           FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                <TextBlock Text="系统" Margin="0,0,16,0" Cursor="Hand"
+                           Foreground="{DynamicResource Brush.Text.Primary}"
+                           FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                <TextBlock Text="帮助" Cursor="Hand"
+                           Foreground="{DynamicResource Brush.Text.Primary}"
+                           FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+            </StackPanel>
+        </Border>
 
-                <Label Style="{StaticResource Label.Caption}" Content="工作模式" Margin="0,16,0,6"/>
-                <mac:SegmentedControl Style="{StaticResource SegmentedControl.Mac}"
-                                      Height="30"
-                                      SelectedIndex="0">
+        <!-- ================= 功能工具栏 ================= -->
+        <Border Grid.Row="1" Background="{DynamicResource Brush.Bg.Secondary}"
+                BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,0,0,1">
+            <Grid Margin="12,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 流程 + 运行控制 -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource Button.Ghost}"   Content="新建流程" MinWidth="64"/>
+                    <Button Style="{StaticResource Button.Ghost}"   Content="打开"     MinWidth="52" Margin="6,0,0,0"/>
+                    <Button Style="{StaticResource Button.Outline}" Content="保存流程" MinWidth="72" Margin="6,0,0,0"/>
+                    <Border Width="1" Background="{DynamicResource Brush.Border}" Margin="14,4"/>
+                    <Button Style="{StaticResource Button.Ghost}"   Content="单帧"     MinWidth="52"/>
+                    <Button Style="{StaticResource Button.Outline}" Content="停止"     MinWidth="64" Margin="6,0,0,0"/>
+                    <Button Style="{StaticResource Button.Primary}" Content="启动检测" MinWidth="92" Margin="6,0,0,0"/>
+                </StackPanel>
+
+                <!-- 工作模式切换 -->
+                <mac:SegmentedControl Grid.Column="1" Style="{StaticResource SegmentedControl.Mac}"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      Height="30" SelectedIndex="0">
                     <ListBoxItem Content="采集"/>
                     <ListBoxItem Content="标定"/>
                     <ListBoxItem Content="检测"/>
                 </mac:SegmentedControl>
 
-                <Separator Margin="0,16,0,8"/>
-
-                <Button Style="{StaticResource Button.Ghost}" Content="图像采集" HorizontalContentAlignment="Left"/>
-                <Button Style="{StaticResource Button.Ghost}" Content="标定管理" HorizontalContentAlignment="Left" Margin="0,4,0,0"/>
-                <Button Style="{StaticResource Button.Ghost}" Content="配方参数" HorizontalContentAlignment="Left" Margin="0,4,0,0"/>
-                <Button Style="{StaticResource Button.Ghost}" Content="系统设置" HorizontalContentAlignment="Left" Margin="0,4,0,0"/>
-
-                <Separator Margin="0,16,0,8"/>
-
-                <CheckBox Style="{StaticResource CheckBox.Mac}" Content="启用自动触发" IsChecked="True"/>
-                <CheckBox Style="{StaticResource CheckBox.Mac}" Content="保存检测结果" Margin="0,8,0,0"/>
-
-                <Separator Margin="0,16,0,8"/>
-
-                <RadioButton Style="{StaticResource RadioButton.Mac}" Content="灰度相机" IsChecked="True"/>
-                <RadioButton Style="{StaticResource RadioButton.Mac}" Content="彩色相机" Margin="0,8,0,0"/>
-            </StackPanel>
+                <!-- 相机 + 在线状态 -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <ComboBox Style="{StaticResource ComboBox.Mac}" SelectedIndex="0" MinWidth="150">
+                        <ComboBoxItem Content="Camera 0 · GigE"/>
+                        <ComboBoxItem Content="Camera 1 · USB3"/>
+                    </ComboBox>
+                    <Border Background="{DynamicResource Brush.Success}" CornerRadius="6"
+                            Width="14" Height="14" Margin="12,0,6,0" VerticalAlignment="Center">
+                        <Border.ToolTip>
+                            <ToolTip Style="{StaticResource Tooltip.Mac}" Content="相机在线"/>
+                        </Border.ToolTip>
+                    </Border>
+                    <TextBlock Text="在线" VerticalAlignment="Center"
+                               Foreground="{DynamicResource Brush.Text.Secondary}"
+                               FontFamily="{DynamicResource Font.Primary}"
+                               FontSize="{DynamicResource Font.Size.Caption}"/>
+                </StackPanel>
+            </Grid>
         </Border>
 
-        <!-- ============ 中间预览画布（不加阴影，避免干扰画面） ============ -->
-        <Border Grid.Column="1" Margin="16,0,16,0"
-                Background="#101014" CornerRadius="{DynamicResource Radius.Lg}">
+        <!-- ================= 主体 ================= -->
+        <Grid Grid.Row="2" Margin="{StaticResource Space.12}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>   <!-- 工具列 -->
+                <ColumnDefinition Width="240"/>   <!-- 流程编辑区 -->
+                <ColumnDefinition Width="*"/>     <!-- 图像显示区 -->
+                <ColumnDefinition Width="320"/>   <!-- 参数面板 -->
+            </Grid.ColumnDefinitions>
+
+            <!-- 左侧工具列（海康竖排视觉工具） -->
+            <Border Grid.Column="0" Style="{StaticResource Card.Mac}" Padding="10">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Label Style="{StaticResource Label.Caption}" Content="采集"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="图像源" HorizontalContentAlignment="Left"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="采集"   HorizontalContentAlignment="Left" Margin="0,2,0,0"/>
+
+                        <Label Style="{StaticResource Label.Caption}" Content="定位" Margin="0,10,0,0"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="快速匹配" HorizontalContentAlignment="Left"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="灰度匹配" HorizontalContentAlignment="Left" Margin="0,2,0,0"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="图形定位" HorizontalContentAlignment="Left" Margin="0,2,0,0"/>
+
+                        <Label Style="{StaticResource Label.Caption}" Content="检测" Margin="0,10,0,0"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="BLOB 分析" HorizontalContentAlignment="Left"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="边缘检测" HorizontalContentAlignment="Left" Margin="0,2,0,0"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="卡尺工具" HorizontalContentAlignment="Left" Margin="0,2,0,0"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="圆查找"   HorizontalContentAlignment="Left" Margin="0,2,0,0"/>
+
+                        <Label Style="{StaticResource Label.Caption}" Content="测量" Margin="0,10,0,0"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="位置校正" HorizontalContentAlignment="Left"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="矩形检测" HorizontalContentAlignment="Left" Margin="0,2,0,0"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="顶点检测" HorizontalContentAlignment="Left" Margin="0,2,0,0"/>
+
+                        <Label Style="{StaticResource Label.Caption}" Content="系统" Margin="0,10,0,0"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="标定"     HorizontalContentAlignment="Left"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="配方管理" HorizontalContentAlignment="Left" Margin="0,2,0,0"/>
+                        <Button Style="{StaticResource Button.Ghost}" Content="系统设置" HorizontalContentAlignment="Left" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- 流程编辑区（海康流程编排） -->
+            <Border Grid.Column="1" Margin="12,0,0,0"
+                    Style="{StaticResource Card.Mac}" Padding="12">
+                <StackPanel>
+                    <Label Style="{StaticResource Label.Caption}" Content="流程1"/>
+                    <TextBlock Text="当前流程 · 5 个模块" Margin="0,4,0,0"
+                               Foreground="{DynamicResource Brush.Text.Tertiary}"
+                               FontFamily="{DynamicResource Font.Primary}"
+                               FontSize="{DynamicResource Font.Size.Caption}"/>
+
+                    <!-- 流程节点 -->
+                    <Border Background="{DynamicResource Brush.Accent.Light}" CornerRadius="{DynamicResource Radius.Sm}"
+                            Padding="10,7" Margin="0,12,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="0" Foreground="{DynamicResource Brush.Accent}"
+                                       FontWeight="{DynamicResource Font.Weight.Semibold}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Text="图像源" Margin="10,0,0,0"
+                                       Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Text="▼" HorizontalAlignment="Center" Margin="0,2"
+                               Foreground="{DynamicResource Brush.Text.Tertiary}"/>
+
+                    <Border Background="{DynamicResource Brush.Bg.Tertiary}" CornerRadius="{DynamicResource Radius.Sm}"
+                            Padding="10,7">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="1" Foreground="{DynamicResource Brush.Text.Tertiary}"
+                                       FontWeight="{DynamicResource Font.Weight.Semibold}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Text="定位 · 快速匹配" Margin="10,0,0,0"
+                                       Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Text="▼" HorizontalAlignment="Center" Margin="0,2"
+                               Foreground="{DynamicResource Brush.Text.Tertiary}"/>
+
+                    <Border Background="{DynamicResource Brush.Bg.Tertiary}" CornerRadius="{DynamicResource Radius.Sm}"
+                            Padding="10,7">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="2" Foreground="{DynamicResource Brush.Text.Tertiary}"
+                                       FontWeight="{DynamicResource Font.Weight.Semibold}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Text="测量 · 圆查找" Margin="10,0,0,0"
+                                       Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Text="▼" HorizontalAlignment="Center" Margin="0,2"
+                               Foreground="{DynamicResource Brush.Text.Tertiary}"/>
+
+                    <Border Background="{DynamicResource Brush.Bg.Tertiary}" CornerRadius="{DynamicResource Radius.Sm}"
+                            Padding="10,7">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="3" Foreground="{DynamicResource Brush.Text.Tertiary}"
+                                       FontWeight="{DynamicResource Font.Weight.Semibold}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Text="格式化" Margin="10,0,0,0"
+                                       Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 添加组件 -->
+                    <Button Style="{StaticResource Button.Outline}" Content="＋ 添加组件"
+                            Margin="0,12,0,0" HorizontalContentAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 图像显示区（纯净画布） -->
+            <Border Grid.Column="2" Margin="12,0,12,0"
+                    Background="#101014" CornerRadius="{DynamicResource Radius.Lg}">
+                <Grid>
+                    <!-- 显示工具条 -->
+                    <Border VerticalAlignment="Top" Margin="10" Background="#00000070"
+                            CornerRadius="{DynamicResource Radius.Md}" Padding="8,4">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="100%" Foreground="#D2D2D7"
+                                       FontFamily="{DynamicResource Font.Primary}"
+                                       FontSize="{DynamicResource Font.Size.Caption}" VerticalAlignment="Center"/>
+                            <TextBlock Text="Mono8" Foreground="#D2D2D7" Margin="12,0,0,0"
+                                       FontFamily="{DynamicResource Font.Primary}"
+                                       FontSize="{DynamicResource Font.Size.Caption}" VerticalAlignment="Center"/>
+                            <Button Style="{StaticResource Button.Ghost}" Content="全屏" Margin="12,0,0,0"
+                                    Foreground="#D2D2D7" Padding="8,2"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="图像预览区 · 纯净画布"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Foreground="#8E8E93"
+                               FontFamily="{DynamicResource Font.Primary}"
+                               FontSize="{DynamicResource Font.Size.Subtitle}"/>
+
+                    <!-- 底部标签：全局图像 / 模块结果 -->
+                    <Border VerticalAlignment="Bottom" Background="#00000090"
+                            CornerRadius="{DynamicResource Radius.Sm}" Margin="10"
+                            Padding="10,5">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="全局图像" Foreground="#FFFFFF"
+                                       FontWeight="{DynamicResource Font.Weight.Semibold}"
+                                       FontFamily="{DynamicResource Font.Primary}"
+                                       FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Text="模块结果" Foreground="#8E8E93" Margin="16,0,0,0"
+                                       FontFamily="{DynamicResource Font.Primary}"
+                                       FontSize="{DynamicResource Font.Size.Body}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- 右侧参数面板（海康选项卡配置区） -->
+            <Border Grid.Column="3" Style="{StaticResource Card.Mac}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Label Style="{StaticResource Label.SectionTitle}" Content="参数设置"/>
+                        <TextBlock Text="模块：0 · 图像源" Margin="0,2,0,0"
+                                   Foreground="{DynamicResource Brush.Text.Tertiary}"
+                                   FontFamily="{DynamicResource Font.Primary}"
+                                   FontSize="{DynamicResource Font.Size.Caption}"/>
+
+                        <!-- 选项卡（复用 SegmentedControl，海康基本参数/特征模板/结果显示） -->
+                        <mac:SegmentedControl Style="{StaticResource SegmentedControl.Mac}"
+                                              Height="30" SelectedIndex="0" Margin="0,12,0,0">
+                            <ListBoxItem Content="基本参数"/>
+                            <ListBoxItem Content="特征模板"/>
+                            <ListBoxItem Content="结果显示"/>
+                        </mac:SegmentedControl>
+
+                        <!-- 基本参数内容 -->
+                        <Label Style="{StaticResource Label.Caption}" Content="相机参数" Margin="0,14,0,6"/>
+                        <Label Style="{StaticResource Label.Caption}" Content="曝光值 (µs)"/>
+                        <TextBox Style="{StaticResource TextBox.Mac}" Text="5000" Margin="0,4,0,0"/>
+                        <Label Style="{StaticResource Label.Caption}" Content="增益" Margin="0,10,0,0"/>
+                        <Slider Style="{StaticResource Slider.Mac}" Minimum="0" Maximum="20" Value="8"/>
+
+                        <Separator Margin="0,14,0,12"/>
+
+                        <Label Style="{StaticResource Label.Caption}" Content="检测参数"/>
+                        <Label Style="{StaticResource Label.Caption}" Content="检测阈值" Margin="0,8,0,0"/>
+                        <Slider Style="{StaticResource Slider.Mac}" Minimum="0" Maximum="255" Value="128"/>
+                        <Label Style="{StaticResource Label.Caption}" Content="ROI 尺寸 (px)" Margin="0,10,0,0"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Style="{StaticResource TextBox.Mac}" Grid.Column="0" Text="1280"/>
+                            <TextBox Style="{StaticResource TextBox.Mac}" Grid.Column="2" Text="1024"/>
+                        </Grid>
+
+                        <Label Style="{StaticResource Label.Caption}" Content="ROI 类型" Margin="0,12,0,0"/>
+                        <RadioButton Style="{StaticResource RadioButton.Mac}" Content="矩形 ROI" IsChecked="True"/>
+                        <RadioButton Style="{StaticResource RadioButton.Mac}" Content="圆形 ROI" Margin="0,6,0,0"/>
+
+                        <CheckBox Style="{StaticResource CheckBox.Mac}" Content="启用自动触发" Margin="0,12,0,0" IsChecked="True"/>
+                        <CheckBox Style="{StaticResource CheckBox.Mac}" Content="保存检测结果" Margin="0,8,0,0"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                            <Button Style="{StaticResource Button.Primary}" Content="应用参数" Width="96"/>
+                            <Button Style="{StaticResource Button.Outline}" Content="重置" Width="72" Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
+        <!-- ================= 历史结果 ================= -->
+        <Border Grid.Row="3" Background="{DynamicResource Brush.Bg.Secondary}"
+                BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,1,0,0">
             <Grid>
-                <TextBlock Text="图像预览区 · 无阴影 / 无毛玻璃，保证高帧率"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                           Foreground="#8E8E93"
-                           FontFamily="{DynamicResource Font.Primary}"
-                           FontSize="{DynamicResource Font.Size.Subtitle}"/>
-                <Border VerticalAlignment="Bottom" Margin="12"
-                        Background="#00000090" CornerRadius="{DynamicResource Radius.Md}"
-                        Padding="10,6">
-                    <StackPanel Orientation="Horizontal">
-                        <Button Style="{StaticResource Button.Primary}" Content="开始采集"/>
-                        <Button Style="{StaticResource Button.Outline}" Content="单帧" Margin="8,0,0,0"/>
-                        <Button Style="{StaticResource Button.Ghost}" Content="导出" Margin="8,0,0,0"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="140"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 表头 -->
+                <Border Grid.Row="0" Grid.ColumnSpan="4" Background="{DynamicResource Brush.Bg.Tertiary}" Padding="12,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="200"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="140"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="执行序号" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
+                                   FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Caption}"/>
+                        <TextBlock Grid.Column="1" Text="时间" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
+                                   FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Caption}"/>
+                        <TextBlock Grid.Column="2" Text="模块数据" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
+                                   FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Caption}"/>
+                        <TextBlock Grid.Column="3" Text="状态" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Secondary}"
+                                   FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Caption}"/>
+                    </Grid>
+                </Border>
+
+                <!-- 表体（示例数据） -->
+                <Border Grid.Row="1" Grid.ColumnSpan="4" Padding="12,0">
+                    <StackPanel>
+                        <Grid Margin="0,6,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="140"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="44" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Grid.Column="1" Text="2026-10-21 13:30:12.497" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Grid.Column="2" Text="定位结果: 353.6, 283.2" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Grid.Column="3" Text="OK" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Success}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                        </Grid>
+                        <Grid Margin="0,6,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="140"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="43" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Grid.Column="1" Text="2026-10-21 13:30:12.387" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Grid.Column="2" Text="定位结果: 352.1, 281.9" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Grid.Column="3" Text="OK" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Success}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                        </Grid>
+                        <Grid Margin="0,6,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="140"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="42" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Grid.Column="1" Text="2026-10-21 13:30:12.279" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Grid.Column="2" Text="定位失败: 未找到目标" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Text.Primary}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                            <TextBlock Grid.Column="3" Text="NG" VerticalAlignment="Center" Foreground="{DynamicResource Brush.Danger}"
+                                       FontFamily="{DynamicResource Font.Primary}" FontSize="{DynamicResource Font.Size.Body}"/>
+                        </Grid>
                     </StackPanel>
                 </Border>
             </Grid>
         </Border>
 
-        <!-- ============ 右侧 Inspector 参数面板 ============ -->
-        <Border Grid.Column="2" Style="{StaticResource Card.Mac}">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel>
-                    <Label Style="{StaticResource Label.SectionTitle}" Content="参数设置"/>
-
-                    <Label Style="{StaticResource Label.Caption}" Content="相机列表" Margin="0,16,0,6"/>
-                    <ComboBox Style="{StaticResource ComboBox.Mac}" SelectedIndex="0">
-                        <ComboBoxItem Content="Camera 0 · GigE"/>
-                        <ComboBoxItem Content="Camera 1 · USB3"/>
-                    </ComboBox>
-
-                    <Label Style="{StaticResource Label.Caption}" Content="曝光值 (µs)" Margin="0,16,0,6"/>
-                    <TextBox Style="{StaticResource TextBox.Mac}" Text="5000"/>
-
-                    <Label Style="{StaticResource Label.Caption}" Content="增益" Margin="0,16,0,6"/>
-                    <Slider Style="{StaticResource Slider.Mac}" Minimum="0" Maximum="20" Value="8"/>
-
-                    <Label Style="{StaticResource Label.Caption}" Content="检测阈值" Margin="0,16,0,6"/>
-                    <Slider Style="{StaticResource Slider.Mac}" Minimum="0" Maximum="255" Value="128"/>
-
-                    <Label Style="{StaticResource Label.Caption}" Content="ROI 尺寸 (px)" Margin="0,16,0,6"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="8"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBox Style="{StaticResource TextBox.Mac}" Grid.Column="0" Text="1280"/>
-                        <TextBox Style="{StaticResource TextBox.Mac}" Grid.Column="2" Text="1024"/>
-                    </Grid>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                        <Button Style="{StaticResource Button.Primary}" Content="应用参数" Width="96"/>
-                        <Button Style="{StaticResource Button.Outline}" Content="重置" Width="72" Margin="8,0,0,0"/>
-                    </StackPanel>
-                </StackPanel>
-            </ScrollViewer>
+        <!-- ================= 状态栏 ================= -->
+        <Border Grid.Row="4" Background="{DynamicResource Brush.Bg.Secondary}"
+                BorderBrush="{DynamicResource Brush.Border}" BorderThickness="0,1,0,0">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0">
+                <TextBlock Text="就绪" VerticalAlignment="Center"
+                           Foreground="{DynamicResource Brush.Success}"
+                           FontFamily="{DynamicResource Font.Primary}"
+                           FontSize="{DynamicResource Font.Size.Caption}"/>
+                <TextBlock Text="  ·  流程 0.00 ms"
+                           VerticalAlignment="Center" Margin="8,0,0,0"
+                           Foreground="{DynamicResource Brush.Text.Secondary}"
+                           FontFamily="{DynamicResource Font.Primary}"
+                           FontSize="{DynamicResource Font.Size.Caption}"/>
+                <TextBlock Text="  ·  X:---  Y:---  灰度:0   ·   100%"
+                           VerticalAlignment="Center" Margin="8,0,0,0"
+                           Foreground="{DynamicResource Brush.Text.Tertiary}"
+                           FontFamily="{DynamicResource Font.Primary}"
+                           FontSize="{DynamicResource Font.Size.Caption}"/>
+                <TextBlock Text="  ·  2026-10-21 13:36"
+                           VerticalAlignment="Center" Margin="8,0,0,0"
+                           Foreground="{DynamicResource Brush.Text.Tertiary}"
+                           FontFamily="{DynamicResource Font.Primary}"
+                           FontSize="{DynamicResource Font.Size.Caption}"/>
+            </StackPanel>
         </Border>
     </Grid>
 </Window>
